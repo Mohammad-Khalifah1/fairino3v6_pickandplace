@@ -45,7 +45,6 @@ fairino3_v6_moveit2_config/
 │   ├── color_detection.py                 # Camera + HSV color detection
 │   ├── robot_movement.py                  # ROS2 node, MoveIt planning, sequences
 │   ├── gripper.py                         # XML-RPC gripper control
-│   └── run.py                             # Single-run test (fixed color)
 │
 └── world_collision.py                     # Collision objects setup
 ```
