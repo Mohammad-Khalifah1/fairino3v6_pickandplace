@@ -15,6 +15,7 @@ Camera (OpenCV)
                             ├── fairino3_controller executes trajectory
                             └── Gripper via XML-RPC (SetDO)
 ```
+<img width="2908" height="1440" alt="Gemini_Generated_Image_vn9diqvn9diqvn9d" src="https://github.com/user-attachments/assets/69d938b4-a107-47a8-8889-523d7b87bbb2" />
 
 ---
 
