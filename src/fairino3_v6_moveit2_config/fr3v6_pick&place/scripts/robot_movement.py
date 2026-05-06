@@ -9,7 +9,8 @@ from sensor_msgs.msg import JointState
 import numpy as np
 import time
 
-from gripper import Gripper  # External gripper class
+from gripper import Gripper
+from status import Status
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -99,6 +100,7 @@ class RobotMover(Node):
 
         self.positions = {name: {'angles': angles} for name, angles in POSITIONS.items()}
         self.gripper   = Gripper()
+        self.status    = Status()
 
         # Action client — sends trajectory to controller
         self._action_client = ActionClient(
@@ -223,21 +225,26 @@ class RobotMover(Node):
             self.get_logger().error(f'Unknown group: "{group}". Available: {list(SEQUENCES.keys())}')
             return
 
+        self.status.on(group)
+
         self.get_logger().info(f'Starting sequence for group: {group}')
 
-        for step in sequence:
-            position_name, gripper_action = step if isinstance(step, tuple) else (step, None)
+        try:
+            for step in sequence:
+                position_name, gripper_action = step if isinstance(step, tuple) else (step, None)
 
-            self.move_to(position_name)
-            self.wait_until_done()
+                self.move_to(position_name)
+                self.wait_until_done()
 
-            if gripper_action == 'open':
-                self.get_logger().info('Gripper: opening')
-                self.gripper.open_gripper()
-                time.sleep(0.3)
-            elif gripper_action == 'close':
-                self.get_logger().info('Gripper: closing')
-                self.gripper.close_gripper()
-                time.sleep(0.3)
+                if gripper_action == 'open':
+                    self.get_logger().info('Gripper: opening')
+                    self.gripper.open_gripper()
+                    time.sleep(0.3)
+                elif gripper_action == 'close':
+                    self.get_logger().info('Gripper: closing')
+                    self.gripper.close_gripper()
+                    time.sleep(0.3)
 
-        self.get_logger().info(f'Sequence complete for group: {group}')
+            self.get_logger().info(f'Sequence complete for group: {group}')
+        finally:
+            self.status.off(group)
